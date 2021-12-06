@@ -1,27 +1,23 @@
 const m = new Map;
 function output(data, t) {
-  function dfs(node, left, rests) {
-    const key = [...node, left, rests.length];
+  function dfs(index, left) {
+    const key = [index, left].join(',');
     if (m.has(key)) return m.get(key);
-    if (left - node[0] < 0 || rests.length === 0) {
+    if (index >= data.length) {
       m.set(key, 0);
-      m.set(key.join(','), 0);
+      // m.set(key.join(','), 0);
       return 0;
     }
     const a = Math.max(
-      ...rests.map(
-        (_, i) => dfs(rests[i], left - node[0], [...rests.slice(0, i), ...rests.slice(i + 1)])
-      )
+      dfs(index + 1, left),
+      left > data[index][0] ? dfs(index + 1, left - data[index][0]) + data[index][1] : 0,
     )
-    if (m.has(key.join(',')) && m.get(key.join(',')) !== a + node[1]) console.log(key, a + node[1], m.get(key.join(',')));
-    m.set(key, a + node[1]);
-    m.set(key.join(','), a + node[1]);
-    return a + node[1];
+    m.set(key, a);
+    // m.set(key.join(','), a + node[1]);
+    return a;
   }
 
-  return Math.max(...data.map(
-    (node, i) => dfs(node, t, [...data.slice(0, i), ...data.slice(i + 1)])
-  ))
+  return dfs(0, t);
 }
 
 const r = output(
@@ -34,4 +30,4 @@ const r = output(
   [[71, 26], [34, 59], [82, 30], [23, 19], [1, 66], [88, 85], [12, 94]], 1000
 );
 console.log(r);
-console.log(m);
+console.log([...m.entries()])

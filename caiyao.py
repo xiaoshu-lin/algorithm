@@ -1,24 +1,35 @@
 def output (data, t):
-  dp = {}
-  def dfs(node, left, rests):
-    key = "[%d,%d],%d,%d"%(node[0],node[1],left,len(rests))
-    if (dp.has_key(key)):
-      return dp[key]
-    if (left - node[0] < 0 or len(rests) == 0):
-      dp[key] = 0
-      return 0
-    __max = 0
-    for i, b in enumerate(rests):
-      __max = max(__max,dfs(b, left - node[0], rests[0:i]+rests[i+1:]))
-    dp[key] = __max+node[1]
-    return dp[key]
+  dp = []*t
 
-  __max = 0
-  for i, node in enumerate(data):
-    __max = max(__max,dfs(node, t, data[0:i]+data[i+1:]))
-  
-  print(dp, len(dp))
-  return __max
+  # def dfs(index, left):
+  #   key = "[%d,%d]"%(index,left)
+  #   if (dp.has_key(key)):
+  #     return dp[key]
+  #   if (index >= len(data)):
+  #     dp[key] = 0
+  #     return 0
+  #   dp[key] = max(
+  #     dfs(index + 1, left),
+  #     dfs(index + 1, left - data[index][0]) + data[index][1] if left >= data[index][0] else 0,
+  #   )
+  #   return dp[key]
+    
+  # return dfs(0 ,t)
+
+  for d in data:
+    dp_copy = dp.copy()
+    for _t in range(t,d[1],-1):
+      dp[_t] = max()
+    for k,v in dp_copy.items():
+      if k+d[0] <= t:
+        dp[k+d[0]] = max(
+          dp_copy[k+d[0]] if dp_copy.has_key(k+d[0]) else 0,
+          v+d[1],
+        )
+        # print(d, n, dp)
+
+  # print(dp)
+  return max(dp.values())
 
 t, n = map(lambda x:int(x), raw_input().split())
 x = []
